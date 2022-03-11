@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import Registration from './registration';
 
 const backgroundImage = css`
   background-image: url('/images/sachertorte.jpg');
@@ -15,6 +14,9 @@ const navStyle = css`
   a {
     color: rgb(26, 19, 18);
   }
+  a + a {
+    margin: 0 20px;
+  }
 `;
 
 const bodyStyles = css`
@@ -26,14 +28,14 @@ const bodyStyles = css`
   color: rgb(26, 19, 18);
 `;
 
-const inputStyles = css`
-  width: 200px;
-  height: 25px;
-  margin: 0 15px;
-  display: flex;
-  border-radius: 30px;
-  text-align: center;
-`;
+// const inputStyles = css`
+//   width: 200px;
+//   height: 25px;
+//   margin: 0 15px;
+//   display: flex;
+//   border-radius: 30px;
+//   text-align: center;
+// `;
 
 const landingPageTextStyle = css`
   width: 100vw;
@@ -73,6 +75,7 @@ const viewToursStyle = css`
     color: #373843;
   }
 `;
+
 export default function Home() {
   return (
     <div css={backgroundImage}>
@@ -93,20 +96,11 @@ export default function Home() {
               </Link>
             </div>
             <div css={bodyStyles}>
-              <label>
-                Email:
-                <input css={inputStyles} name="email" placeholder="email" />
-              </label>
-              <label>
-                Password:
-                <input
-                  css={inputStyles}
-                  name="password"
-                  placeholder="password"
-                />
-              </label>
+              <Link href="/login">
+                <a>Login</a>
+              </Link>
               <Link href="/registration">
-                <a>Registration</a>
+                <a>Register</a>
               </Link>
             </div>
           </div>
@@ -114,7 +108,9 @@ export default function Home() {
         <div css={landingPageTextStyle}>
           <div css={viewToursStyle}>
             <h1>Explore food around Vienna with suggestions from locals</h1>
-            <button>View Tours</button>
+            <Link href="/tours">
+              <button>View Tours</button>
+            </Link>
           </div>
           <div css={viewToursStyle}>
             <h2>Not a member yet? Register for free!</h2>

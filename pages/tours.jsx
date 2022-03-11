@@ -1,6 +1,9 @@
 import { css } from '@emotion/react';
+// import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+
+// import { getValidSessionsByToken } from '../util/database';
 
 const backgroundImage = css`
   background-image: url('/images/ferris-wheel.jpg');

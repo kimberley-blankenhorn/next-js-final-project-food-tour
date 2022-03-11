@@ -1,7 +1,14 @@
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { getValidSessionsByToken } from '../util/database';
+
+const errorStyles = css`
+  color: red;
+`;
 
 const backgroundImage = css`
   background-image: url('/images/vienna.jpg');
@@ -103,6 +110,8 @@ const aboutSectionStyle = css`
   }
 `;
 
+type Errors = { message: string }[];
+
 export default function Registration() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -113,6 +122,8 @@ export default function Registration() {
   const [age, setAge] = useState('');
   const [image, setImage] = useState('');
   const [about, setAbout] = useState('');
+  const [errors, setErrors] = useState<Errors>([]);
+  const router = useRouter();
 
   return (
     <div css={backgroundImage}>
@@ -148,9 +159,10 @@ export default function Registration() {
         <section css={containerStyle}>
           <h1>Register</h1>
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
-              fetch('/api/register', {
+
+              const registerResponse = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -158,15 +170,22 @@ export default function Registration() {
                 body: JSON.stringify({
                   firstName: firstName,
                   lastName: lastName,
+                  email: email,
                   username: username,
                   password: password,
-                  email: email,
                   occupation: occupation,
                   age: age,
-                  image: image,
                   about: about,
+                  image: image,
                 }),
               });
+              const registerResponseBody = await registerResponse.json();
+
+              if ('errors' in registerResponseBody) {
+                setErrors(registerResponseBody.errors);
+                return;
+              }
+              await router.push('/');
             }}
           >
             <div css={inputContainerStyle}>
@@ -280,8 +299,39 @@ export default function Registration() {
               <button>Register</button>
             </div>
           </form>
+          <div css={errorStyles}>
+            {/* {JSON.stringify(errors)}
+            {JSON.stringify(typeof errors)} */}
+            {errors.map((error) => {
+              return <div key={`error-${error.message}`}>{error.message}</div>;
+            })}
+          </div>
         </section>
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // 1. Check if there is a token and if it is valid
+  const token = context.req.cookies.sessionToken;
+
+  if (token) {
+    // 2. If the cookie is valid and redirect.
+    const session = await getValidSessionsByToken(token);
+
+    if (session) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
+  }
+
+  // 3. otherwise, render the page
+  return {
+    props: {},
+  };
 }

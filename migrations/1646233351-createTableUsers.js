@@ -10,7 +10,7 @@ exports.up = async (sql) => {
 			occupation varchar(60),
 			age integer,
 			about varchar(300),
-			photo varchar(100)
+			image varchar(100)
 
 		)`;
   // <insert magic here>
