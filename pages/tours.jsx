@@ -1,15 +1,13 @@
 import { css } from '@emotion/react';
-// import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-
-// import { getValidSessionsByToken } from '../util/database';
+import Layout from '../components/Layout';
 
 const backgroundImage = css`
   background-image: url('/images/ferris-wheel.jpg');
-  background-position: center;
+  background-size: cover;
   background-repeat: no-repeat;
-  object-fit: contain;
+  object-fit: cover;
   height: 100vh;
   width: 100vw;
 `;
@@ -17,29 +15,49 @@ const backgroundImage = css`
 const navStyle = css`
   display: flex;
   justify-content: space-between;
-  background-color: rgb(203, 204, 204, 0.7);
+  height: 70px;
+  background-color: rgb(203, 204, 204, 0.9);
+  margin-bottom: 50px;
   a {
-    color: rgb(26, 19, 18);
+    color: black;
     font-weight: 700;
     text-decoration: none;
-  }
-  a + a {
+    -webkit-transition: color 1s;
+    border-bottom: 1px solid transparent;
+
+    transition: all ease-in-out 0.5s;
     margin: 0 20px;
-    padding: 20px 0;
+
+    &:hover {
+      color: rgba(102, 199, 186);
+      border-color: rgba(102, 199, 186);
+    }
   }
 `;
 const containerStyle = css`
-  height: 89vh;
+  height: 75vh;
   width: 90vw;
-  border: solid red 1px;
+  border-radius: 30px;
   margin: auto;
   padding-bottom: 20px;
   text-align: center;
-  /* button {
-    margin-top: 50px;
-    height: 50px;
-    width: 200px;
-  } */
+  background-color: rgb(128, 128, 128, 0.5);
+  color: white;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+  }
+  h1 {
+    font-size: 35px;
+  }
 `;
 
 const bodyStyles = css`
@@ -47,11 +65,10 @@ const bodyStyles = css`
   align-items: center;
   margin-left: 10px;
   /* width: 100vw; */
-  border: solid red 1px;
   color: rgb(26, 19, 18);
 `;
 
-export default function Tours() {
+export default function Tours(props) {
   return (
     <div css={backgroundImage}>
       <div>
@@ -70,21 +87,27 @@ export default function Tours() {
                 <a>FoodiesUnited</a>
               </Link>
             </div>
+
             <div css={bodyStyles}>
-              <Link href="/createTour">
-                <a>Create Tour</a>
-              </Link>
-              <Link href="/tours">
-                <a>Tours</a>
-              </Link>
-              <Link href="/">
-                <a>Login</a>
-              </Link>
+              <Layout userObject={props.userObject}>
+                <Link href="/createTour">
+                  <a>Create List</a>
+                </Link>
+                <Link href="/tours">
+                  <a>Lists</a>
+                </Link>
+                <Link href="/users/protected-user">
+                  <a>Profile</a>
+                </Link>
+                <Link href="/login">
+                  <a>Login</a>
+                </Link>
+              </Layout>
             </div>
           </div>
         </nav>
         <section css={containerStyle}>
-          <h1>Tours</h1>
+          <h1>Recommendation Lists</h1>
         </section>
       </div>
     </div>

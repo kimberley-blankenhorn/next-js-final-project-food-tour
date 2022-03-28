@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Layout from '../components/Layout';
 import { getValidSessionsByToken } from '../util/database';
 
 const errorStyles = css`
@@ -112,7 +113,9 @@ const aboutSectionStyle = css`
 
 type Errors = { message: string }[];
 
-export default function Registration() {
+type Props = { refreshUserProfile: () => void };
+
+export default function Registration(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -137,24 +140,26 @@ export default function Registration() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <nav>
-          <div css={navStyle}>
-            <div css={bodyStyles}>
-              <Link href="/">
-                <a>FoodiesUnited</a>
-              </Link>
+          <Layout>
+            <div css={navStyle}>
+              <div css={bodyStyles}>
+                <Link href="/">
+                  <a>FoodiesUnited</a>
+                </Link>
+              </div>
+              <div css={bodyStyles}>
+                <Link href="/createTour">
+                  <a>Create Tour</a>
+                </Link>
+                <Link href="/tours">
+                  <a>Tours</a>
+                </Link>
+                <Link href="/login">
+                  <a>Login</a>
+                </Link>
+              </div>
             </div>
-            <div css={bodyStyles}>
-              <Link href="/createTour">
-                <a>Create Tour</a>
-              </Link>
-              <Link href="/tours">
-                <a>Tours</a>
-              </Link>
-              <Link href="/">
-                <a>Login</a>
-              </Link>
-            </div>
-          </div>
+          </Layout>
         </nav>
         <section css={containerStyle}>
           <h1>Register</h1>
@@ -179,13 +184,15 @@ export default function Registration() {
                   image: image,
                 }),
               });
+
               const registerResponseBody = await registerResponse.json();
 
               if ('errors' in registerResponseBody) {
                 setErrors(registerResponseBody.errors);
                 return;
               }
-              await router.push('/');
+              props.refreshUserProfile();
+              await router.push('/users/protected-user');
             }}
           >
             <div css={inputContainerStyle}>
@@ -313,6 +320,19 @@ export default function Registration() {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Redirect from HTTP to HTTPS on Heroku
+  if (
+    context.req.headers.host &&
+    context.req.headers['x-forwarded-proto'] &&
+    context.req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return {
+      redirect: {
+        destination: `https://${context.req.headers.host}/registration`,
+        permanent: true,
+      },
+    };
+  }
   // 1. Check if there is a token and if it is valid
   const token = context.req.cookies.sessionToken;
 

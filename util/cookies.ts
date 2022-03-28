@@ -4,7 +4,7 @@ import { serialize } from 'cookie';
 export function createSerializedRegisterSessionTokenCookie(token: string) {
   const isProduction = process.env.NODE_ENV === 'production';
 
-  const maxAge = 60 * 10; // 10 minute session
+  const maxAge = 60 * 60 * 10; // 24H session
   return serialize('sessionToken', token, {
     maxAge: maxAge,
 

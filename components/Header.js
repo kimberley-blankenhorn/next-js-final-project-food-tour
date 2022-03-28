@@ -1,58 +1,41 @@
 import { css } from '@emotion/react';
-import Link from 'next/link';
+
+// import Link from 'next/link';
+// import { AnchorHTMLAttributes } from 'react';
+// import { User } from '../util/database';
 
 const navStyle = css`
   display: flex;
   justify-content: space-between;
-  width: 100vw;
-`;
-const headerStyles = css`
-  background-color: transparent;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 8px 8px 20px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-
-  a + a {
-    margin-left: 50px;
-  }
+  color: rgba(102, 199, 186);
+  font-weight: 700;
+  margin: 0 20px;
   a {
-    color: white;
-    text-decoration: none;
-    margin-right: 50px;
-    font-size: 20px;
+    color: rgb(26, 19, 18);
+  }
+  a + a {
+    margin: 0 20px;
   }
 `;
 
-const logo = css`
-  display: flex;
-  justify-content: flex-start;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 8px 8px 20px;
-  font-size: 20px;
-  color: white;
-  font-weight: 800;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
-`;
+// type Props = {
+//   userObject?: User;
+// };
 
-export default function Header() {
+// function Anchor({
+//   children,
+//   ...restProps
+// }: AnchorHTMLAttributes<HTMLAnchorElement> & {
+//   css?: Interpolation<Theme>;
+// }) {
+//   return <a {...restProps}>{children}</a>;
+// }
+
+export default function Header(props) {
   return (
-    <header css={navStyle}>
-      <div css={logo}>FoodiesUnited</div>
-      <div css={headerStyles}>
-        <Link href="/">
-          <a>Home</a>
-        </Link>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-        <Link href="/tours">
-          <a>Tours</a>
-        </Link>
+    <header>
+      <div css={navStyle}>
+        {props.userObject && <div>{props.userObject.username}</div>}
       </div>
     </header>
   );

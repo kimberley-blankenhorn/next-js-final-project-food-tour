@@ -88,6 +88,10 @@ export async function getUserById(id: number) {
 type Session = {
   id: number;
   token: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  user_id: number;
 };
 
 export async function createSession(token: string, userId: number) {
@@ -99,6 +103,7 @@ export async function createSession(token: string, userId: number) {
   RETURNING
     id,
     token
+
 
   `;
 
@@ -129,16 +134,194 @@ export async function deleteExpiredSessions() {
   return sessions.map((session) => camelcaseKeys(session));
 }
 
-export async function getValidSessionsByToken(token: string) {
+export async function getValidSessionsByToken(token: string | undefined) {
+  if (!token) return undefined;
   const [session] = await sql<[Session | undefined]>`
   SELECT
     *
   FROM
     sessions
   WHERE
-    token = ${token}
+    token = ${token} AND
+    expiry_timestamp > now()
   `;
   await deleteExpiredSessions();
 
   return session && camelcaseKeys(session);
 }
+
+export async function getUserByValidSessionToken(token: string | undefined) {
+  if (!token) return undefined;
+  const [user] = await sql<[User | undefined]>`
+    SELECT
+      users.id,
+      users.username
+    FROM
+      users,
+      sessions
+
+    WHERE
+      sessions.token = ${token} AND
+      sessions.user_id = users.id AND
+      sessions.expiry_timestamp > now()
+  `;
+  return user && camelcaseKeys(user);
+}
+
+export type Restaurant = {
+  id: number;
+  name: string;
+  address: string;
+  type: string;
+  url: string;
+};
+
+export async function createRestaurant(
+  name: string,
+  address: string,
+  type: string,
+  url: string,
+) {
+  const [restaurant] = await sql<[Restaurant]>`
+  INSERT INTO restaurant
+  (name, address, type, url )
+  VALUES
+  (${name}, ${address}, ${type},  ${url})
+  RETURNING
+  name,
+  type
+  `;
+  return camelcaseKeys(restaurant);
+}
+
+export async function getRestaurantById(id: number) {
+  const [restaurant] = await sql<[Restaurant | undefined]>`
+  SELECT
+    name,
+    type
+  FROM
+    restaurant
+  WHERE
+    id = ${id}`;
+
+  return restaurant && camelcaseKeys(restaurant);
+}
+
+export async function deleteRestaurantById(id: number) {
+  const [restaurant] = await sql<[Restaurant | undefined]>`
+  DELETE FROM
+    restaurant
+  WHERE
+    id = ${id}
+  RETURNING *
+  `;
+  return restaurant && camelcaseKeys(restaurant);
+}
+
+export type SuggestionList = {
+  id: number;
+  userId: string;
+  description: string;
+};
+
+export async function createSuggestionList(
+  user_id: number,
+  description: string,
+) {
+  const [suggestionList] = await sql<[SuggestionList]>`
+  INSERT INTO suggestion_list
+  ( user_id, description)
+  VALUES
+  ( ${user_id}, ${description})
+  RETURNING
+  description
+
+  `;
+  return camelcaseKeys(suggestionList);
+}
+
+export async function getSuggestionListDescriptionId(id: number) {
+  const [suggestionList] = await sql<[SuggestionList | undefined]>`
+  SELECT
+    description
+  FROM
+    suggestion_list
+  WHERE
+    id = ${id}`;
+
+  return suggestionList && camelcaseKeys(suggestionList);
+}
+
+export async function getAllSuggestionListDescriptions() {
+  const suggestionList = await sql<SuggestionList[]>`
+  SELECT * from suggestion_list;
+  `;
+  return suggestionList.map((suggestion) => camelcaseKeys(suggestion));
+}
+
+export async function getAllRestaurants() {
+  const restaurants = await sql<Restaurant[]>`
+  SELECT * from restaurant;
+  `;
+  return restaurants.map((singleRestaurant) => camelcaseKeys(singleRestaurant));
+}
+
+export type ListWithRestaurants = {
+  id: number;
+  suggestionListId: number;
+  restaurantId: number;
+};
+
+export async function createSuggestionListWithRestaurants(
+  suggestionListId: number,
+  restaurantId: number,
+) {
+  const [listWithRestaurants] = await sql<[ListWithRestaurants]>`
+  INSERT INTO suggestion_list_restaurants
+    (suggestion_list_id, restaurant_id)
+  VALUES
+    (${suggestionListId}, ${restaurantId})
+  RETURNING
+  *
+  `;
+  return camelcaseKeys(listWithRestaurants);
+}
+
+export async function getSuggestionListWithRestaurantsListId(
+  restaurantId: number,
+  suggestionListId: number,
+) {
+  const listWithRestaurants = await sql<[ListWithRestaurants]>`
+  SELECT
+    suggestion_list.description,
+    restaurant.name,
+    restaurant.type
+  FROM
+    suggestion_list,
+    restaurant,
+    suggestion_list_restaurants
+  WHERE
+    restaurant_id = ${restaurantId} AND
+    suggestion_list_id = ${suggestionListId}
+    `;
+
+  return listWithRestaurants;
+}
+
+// export async function getUserByValidSessionToken(token: string | undefined) {
+//   if (!token) return undefined;
+//   const [user] = await sql<[User | undefined]>`
+//     SELECT
+//       users.id,
+//       users.username
+//     FROM
+//       users,
+//       sessions,
+//       suggestion_list
+//     WHERE
+//       sessions.token = ${token} AND
+//       sessions.user_id = users.id AND
+//       sessions.expiry_timestamp > now()
+//   `;
+//   return user && camelcaseKeys(user);
+// }
