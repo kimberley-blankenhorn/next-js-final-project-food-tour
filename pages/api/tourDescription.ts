@@ -24,11 +24,11 @@ export default async function createSuggestionListDescriptionHandler(
       request.body.userId,
       request.body.description,
     );
-
+    console.log('checking the suggestionList', suggestionList);
     response.status(201).json({ suggestionList: suggestionList });
     return;
   }
-  console.log(request.body);
+
   response.status(405).json({
     errors: [
       {

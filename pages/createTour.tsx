@@ -62,12 +62,12 @@ const bodyStyles = css`
 `;
 
 const containerStyle = css`
-  height: 70vh;
-  width: 70vw;
+  /* display: flex; */
+  height: 78vh;
+  width: 95vw;
   border-radius: 30px;
-  margin: auto;
+  margin: 0 auto;
   padding-bottom: 20px;
-  text-align: center;
   background-color: rgb(128, 128, 128, 0.8);
   color: white;
   overflow: auto;
@@ -83,29 +83,67 @@ const containerStyle = css`
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
   }
   h1 {
-    font-size: 35px;
+    font-size: 28px;
+    line-height: 28px;
+    text-align: center;
   }
+`;
+const mainHeaderStyle = css`
+  display: flex;
+  justify-content: center;
+
+  /* width: 90vw; */
+  /* width: 100vw; */
+`;
+
+const displayFormStyle = css`
+  display: flex;
+  justify-content: space-evenly;
+  margin-left: 30px;
+`;
+
+const rightFormStyle = css`
+  display: flex;
+  flex-direction: column;
+  /* align-content: flex-start; */
+  border: solid 1px red;
+`;
+
+const leftFormStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  border: solid 1px red;
+`;
+const restaurantInputStyle = css`
+  display: flex;
 `;
 
 const formStyle = css`
+  /* margin: 10px; */
   label {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
-    width: 25vw;
+    width: 18vw;
     font-size: 16px;
     font-weight: 700;
-    margin: 0 10px;
+    margin: 5px;
     input {
-      width: 20vw;
+      width: 17vw;
       height: 20px;
       margin: 10px 10px;
       border-radius: 15px;
       border: none;
       overflow: hidden;
       font-size: 16px;
+    }
+    select {
+      width: 18vw;
+      height: 4vh;
+      border-radius: 30px;
     }
   }
 `;
@@ -126,16 +164,16 @@ const buttonSectionStyle = css`
     color: white;
 
     &:hover {
-      -webkit-box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
-      box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
+      box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
       -webkit-transition: box-shadow 0.3s ease-in-out;
       transition: box-shadow 0.3s ease-in-out;
     }
   }
 `;
-const listNameStyle = css`
-  margin-left: 10px;
-`;
+// const listNameStyle = css`
+//   margin-left: 10px;
+// `;
 
 const errorStyle = css`
   height: 70vh;
@@ -176,7 +214,8 @@ type Props =
       restaurant: Restaurant;
       getAllRestaurantNames: Restaurant[];
       listWithRestaurants: ListWithRestaurants;
-      getAllLists: [{ id: number; description: string; userId: string }];
+      suggestionListRestaurantsId: { id: number }[];
+      getAllLists: { id: number; description: string; userId: string }[];
       getAllRestaurants: [
         {
           id: number;
@@ -204,6 +243,11 @@ export default function CreateTour(props: Props) {
     props.getAllRestaurantNames,
   );
   const [listDescriptions, setListDescriptions] = useState(props.getAllLists);
+  const [suggestionListDescription, setSuggestionListDescription] =
+    useState('');
+  const [list, setList] = useState([]);
+  console.log('checking the list', list);
+  console.log('you selected...', suggestionListDescription);
 
   if ('error' in props) {
     console.log(props.error);
@@ -294,213 +338,268 @@ export default function CreateTour(props: Props) {
           </div>
         </nav>
         <section css={containerStyle}>
-          <h1>Create your own suggestion list</h1>
-          <form
-            css={formStyle}
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const createSuggestionListDescriptionResponse = await fetch(
-                '/api/tourDescription',
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    userId: props.userId,
-                    description: description,
-                  }),
-                },
-              );
-
-              const createSuggestionListDescriptionResponseBody =
-                (await createSuggestionListDescriptionResponse.json()) as CreateSuggestionListDescriptionResponseBody;
-              console.log(createSuggestionListDescriptionResponseBody);
-              const newSuggestionListDescriptionArray = [
-                ...listDescriptions,
-                createSuggestionListDescriptionResponseBody.listWithRestaurants,
-              ];
-              setListDescriptions(newSuggestionListDescriptionArray);
-            }}
-          >
-            <h2>Add list</h2>
-            <div>
-              <label>
-                description
-                <input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </label>
-            </div>
-            <div css={buttonSectionStyle}>
-              <button>Submit</button>
-            </div>
-          </form>
           <div>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const createRestaurantResponse = await fetch(
-                  '/api/restaurant',
-                  {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      name: name,
-                      address: address,
-                      type: type,
-                      url: url,
-                    }),
-                  },
-                );
+            <div css={mainHeaderStyle}>
+              <h1>Create your own suggestion list</h1>
+            </div>
+            <div css={displayFormStyle}>
+              <div css={rightFormStyle}>
+                <form
+                  css={formStyle}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const createSuggestionListDescriptionResponse = await fetch(
+                      '/api/tourDescription',
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: props.userId,
+                          description: description,
+                        }),
+                      },
+                    );
 
-                const createRestaurantResponseBody =
-                  (await createRestaurantResponse.json()) as CreateRestaurantResponseBody;
-                console.log(createRestaurantResponseBody);
-                const newRestaurantArray = [
-                  ...restaurantNames,
-                  createRestaurantResponseBody.restaurant,
-                ];
-                setRestaurantNames(newRestaurantArray);
-              }}
-            >
-              <h2>Add Restaurants</h2>
+                    const createSuggestionListDescriptionResponseBody =
+                      (await createSuggestionListDescriptionResponse.json()) as CreateSuggestionListDescriptionResponseBody;
+                    console.log(createSuggestionListDescriptionResponseBody);
+                    const newSuggestionListDescriptionArray = [
+                      ...listDescriptions,
+                      createSuggestionListDescriptionResponseBody.suggestionList,
+                    ];
+                    setListDescriptions(newSuggestionListDescriptionArray);
+                    setDescription('');
+                  }}
+                >
+                  <h2>Add a description:</h2>
+                  <div>
+                    <label>
+                      description
+                      <input
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <div css={buttonSectionStyle}>
+                    <button>Submit</button>
+                  </div>
+                </form>
 
-              <div>
-                <label>
-                  Name
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    // disabled={isLoading ? 'disabled' : ''}
-                  />
-                </label>
-              </div>
-              <div>
-                <label>
-                  Address
-                  <input
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </label>
-              </div>
-              <div>
-                <label>
-                  Cuisine
-                  <input
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  />
-                </label>
-              </div>
-              <div>
-                <label>
-                  url
-                  <input value={url} onChange={(e) => setUrl(e.target.value)} />
-                </label>
-              </div>
-              <div>
-                <button>Add</button>
-              </div>
-            </form>
-          </div>
-          <div>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const createSuggestionListDescriptionResponse = await fetch(
-                  '/api/createList',
-                  {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      suggestionListId: selectedDescription,
-                      restaurantId: selectedRestaurant,
-                    }),
-                  },
-                );
+                <form
+                  css={formStyle}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const createRestaurantResponse = await fetch(
+                      '/api/restaurant',
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          name: name,
+                          address: address,
+                          type: type,
+                          url: url,
+                        }),
+                      },
+                    );
 
-                const createCompleteListResponseBody =
-                  (await createSuggestionListDescriptionResponse.json()) as CreateCompleteListResponseBody;
-                console.log(createCompleteListResponseBody);
-              }}
-            >
-              <h2>Select List</h2>
-              {/* <div>
-                {listDescriptions.map((singleList) => {
-                  console.log('Checking the single list: ', singleList.id);
-                })}
-              </div> */}
-              <div>
-                <label>
-                  Choose your list you want to add to:
-                  <select
-                    onChange={(e) =>
-                      setSelectedDescription(parseInt(e.currentTarget.value))
-                    }
-                  >
-                    <option key="template" value={0}>
-                      Select List
-                    </option>
-                    {listDescriptions.map((singleList: SuggestionList) => (
-                      <option
-                        key={`single-${singleList.id}`}
-                        value={singleList.id}
+                    const createRestaurantResponseBody =
+                      (await createRestaurantResponse.json()) as CreateRestaurantResponseBody;
+                    console.log(createRestaurantResponseBody);
+                    const newRestaurantArray = [
+                      ...restaurantNames,
+                      createRestaurantResponseBody.restaurant,
+                    ];
+                    setRestaurantNames(newRestaurantArray);
+                    setName('');
+                    setAddress('');
+                    setType('');
+                    setUrl('');
+                  }}
+                >
+                  <h2>Add Restaurants:</h2>
+                  <div css={restaurantInputStyle}>
+                    <div>
+                      <label>
+                        Name
+                        <input
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        Address
+                        <input
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div css={restaurantInputStyle}>
+                    <div>
+                      <label>
+                        Cuisine
+                        <input
+                          value={type}
+                          onChange={(e) => setType(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        url
+                        <input
+                          value={url}
+                          onChange={(e) => setUrl(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div css={buttonSectionStyle}>
+                    <button>Add</button>
+                  </div>
+                </form>
+              </div>
+
+              <div css={leftFormStyle}>
+                <form
+                  css={formStyle}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const createSuggestionListDescriptionResponse = await fetch(
+                      '/api/createList',
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          suggestionListId: selectedDescription,
+                          restaurantId: selectedRestaurant,
+                        }),
+                      },
+                    );
+
+                    const createCompleteListResponseBody =
+                      (await createSuggestionListDescriptionResponse.json()) as CreateCompleteListResponseBody;
+                    console.log(createCompleteListResponseBody);
+                  }}
+                >
+                  <h2>Select List</h2>
+                  <div>
+                    <label>
+                      Choose your list you want to add to:
+                      <select
+                        onChange={(e) =>
+                          setSelectedDescription(
+                            parseInt(e.currentTarget.value),
+                          )
+                        }
                       >
-                        {singleList.description}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <div>
-                <label>
-                  Select Restaurant to add to list:
-                  <select
-                    onChange={(e) =>
-                      setSelectedRestaurant(parseInt(e.currentTarget.value))
-                    }
-                  >
-                    <option key="template" value={0}>
-                      Select Restaurant
-                    </option>
-                    {restaurantNames.map((singleRestaurant: Restaurant) => (
-                      <option
-                        key={`single-${singleRestaurant.id}`}
-                        value={singleRestaurant.id}
+                        <option key="template-1" value={0}>
+                          Select List
+                        </option>
+                        {listDescriptions.map((singleList: SuggestionList) => (
+                          <option
+                            key={`single-${singleList.id}`}
+                            value={singleList.id}
+                          >
+                            {singleList.description}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div>
+                    <label>
+                      Select Restaurant to add to list:
+                      <select
+                        onChange={(e) =>
+                          setSelectedRestaurant(parseInt(e.currentTarget.value))
+                        }
                       >
-                        {singleRestaurant.name}
+                        <option key="template-2" value={0}>
+                          Select Restaurant
+                        </option>
+                        {restaurantNames.map((singleRestaurant: Restaurant) => (
+                          <option
+                            key={`single-${singleRestaurant.id}`}
+                            value={singleRestaurant.id}
+                          >
+                            {singleRestaurant.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div css={buttonSectionStyle}>
+                    <button>Submit</button>
+                  </div>
+                </form>
+                <div>
+                  <label>
+                    Choose your list you want to show:
+                    <select
+                      onChange={(e) => {
+                        setSuggestionListDescription(e.currentTarget.value);
+                      }}
+                    >
+                      <option key="template-4" value={0}>
+                        Select List
                       </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <div>
-                <button>Submit</button>
-              </div>
-            </form>
-          </div>
+                      {listDescriptions.map((singleList: SuggestionList) => (
+                        <option
+                          key={`single-${singleList.id}`}
+                          value={singleList.description}
+                        >
+                          {singleList.description}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    onClick={async () => {
+                      let checkingResults;
 
+                      const requestResponse = await fetch(
+                        `/api/displayList?selectedItem=${suggestionListDescription}`,
+                        {
+                          method: 'GET',
+                        },
+                      );
+                      console.log('requesting the list', requestResponse);
+                      // setList([...requestResponse.list]);
+                      return (checkingResults = requestResponse.list);
+                    }}
+                  >
+                    select
+                  </button>
+                  <div>{list}</div>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* <table>
             <tbody>
               <tr>
                 <th />
                 <th>Restaurant Name</th>
-                <th>Address</th>
                 <th>Cuisine type</th>
                 <th>URL</th>
               </tr>
 
-              {props.listWithRestaurants.map((item) => (
+              {getAllListsWithRestaurants.map((item) => (
                 <tr key={item.id}>
+                  <td>{item.description}</td>
                   <td>{item.name}</td>
-                  <td>{item.type}</td>
 
                   <td>
                     <div>
@@ -526,12 +625,10 @@ export default function CreateTour(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const getAllLists = await getAllSuggestionListDescriptions();
-  console.log('all lists', getAllLists);
   const getAllRestaurantNames = await getAllRestaurants();
-  console.log('list all restaurants', getAllRestaurantNames);
   const sessionToken = context.req.cookies.sessionToken;
   const session = await getUserByValidSessionToken(sessionToken);
-
+  console.log('context query', context.query);
   if (!session) {
     return {
       props: {

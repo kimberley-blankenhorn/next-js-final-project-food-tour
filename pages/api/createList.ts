@@ -27,6 +27,7 @@ export default async function createCompleteListHandler(
       request.body.suggestionListId,
       request.body.restaurantId,
     );
+    console.log('checking the list', completeList);
 
     response.status(201).json({ listWithRestaurants: completeList });
     return;

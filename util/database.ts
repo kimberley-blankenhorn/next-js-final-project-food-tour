@@ -12,6 +12,8 @@ SELECT * FROM users
   return users;
 }
 
+// User section: Create and Get...Need to update and delete
+
 export type User = {
   id: number;
   firstName: string;
@@ -84,6 +86,8 @@ export async function getUserById(id: number) {
 
   return user && camelcaseKeys(user);
 }
+
+// Creating Session section
 
 type Session = {
   id: number;
@@ -168,6 +172,8 @@ export async function getUserByValidSessionToken(token: string | undefined) {
   return user && camelcaseKeys(user);
 }
 
+// Creating the individual restaurant to enter into the database
+
 export type Restaurant = {
   id: number;
   name: string;
@@ -194,6 +200,8 @@ export async function createRestaurant(
   return camelcaseKeys(restaurant);
 }
 
+// To get the individual restaurant by Id
+
 export async function getRestaurantById(id: number) {
   const [restaurant] = await sql<[Restaurant | undefined]>`
   SELECT
@@ -207,6 +215,8 @@ export async function getRestaurantById(id: number) {
   return restaurant && camelcaseKeys(restaurant);
 }
 
+// Delete Restaurants from database
+
 export async function deleteRestaurantById(id: number) {
   const [restaurant] = await sql<[Restaurant | undefined]>`
   DELETE FROM
@@ -217,6 +227,8 @@ export async function deleteRestaurantById(id: number) {
   `;
   return restaurant && camelcaseKeys(restaurant);
 }
+
+// Create the suggestion list description
 
 export type SuggestionList = {
   id: number;
@@ -234,11 +246,13 @@ export async function createSuggestionList(
   VALUES
   ( ${user_id}, ${description})
   RETURNING
-  description
+  *
 
   `;
   return camelcaseKeys(suggestionList);
 }
+
+// Getting the suggestion list description by Id
 
 export async function getSuggestionListDescriptionId(id: number) {
   const [suggestionList] = await sql<[SuggestionList | undefined]>`
@@ -252,6 +266,8 @@ export async function getSuggestionListDescriptionId(id: number) {
   return suggestionList && camelcaseKeys(suggestionList);
 }
 
+// To retrieve all the suggestion list descriptions
+
 export async function getAllSuggestionListDescriptions() {
   const suggestionList = await sql<SuggestionList[]>`
   SELECT * from suggestion_list;
@@ -259,12 +275,16 @@ export async function getAllSuggestionListDescriptions() {
   return suggestionList.map((suggestion) => camelcaseKeys(suggestion));
 }
 
+// To retrieve all restaurants entered in the database
+
 export async function getAllRestaurants() {
   const restaurants = await sql<Restaurant[]>`
   SELECT * from restaurant;
   `;
   return restaurants.map((singleRestaurant) => camelcaseKeys(singleRestaurant));
 }
+
+// Create the suggestion list with restaurants with the description and with the restaurant
 
 export type ListWithRestaurants = {
   id: number;
@@ -287,41 +307,23 @@ export async function createSuggestionListWithRestaurants(
   return camelcaseKeys(listWithRestaurants);
 }
 
+// Get suggestion list with restaurants
+
 export async function getSuggestionListWithRestaurantsListId(
-  restaurantId: number,
-  suggestionListId: number,
+  suggestionListDescription: string,
 ) {
   const listWithRestaurants = await sql<[ListWithRestaurants]>`
   SELECT
-    suggestion_list.description,
-    restaurant.name,
-    restaurant.type
+    restaurant.name
   FROM
     suggestion_list,
     restaurant,
     suggestion_list_restaurants
   WHERE
-    restaurant_id = ${restaurantId} AND
-    suggestion_list_id = ${suggestionListId}
+  suggestion_list.description = ${suggestionListDescription}
+  AND
+  suggestion_list_restaurants.suggestion_list_id = suggestion_list_restaurants.restaurant_id
     `;
 
-  return listWithRestaurants;
+  return camelcaseKeys(listWithRestaurants);
 }
-
-// export async function getUserByValidSessionToken(token: string | undefined) {
-//   if (!token) return undefined;
-//   const [user] = await sql<[User | undefined]>`
-//     SELECT
-//       users.id,
-//       users.username
-//     FROM
-//       users,
-//       sessions,
-//       suggestion_list
-//     WHERE
-//       sessions.token = ${token} AND
-//       sessions.user_id = users.id AND
-//       sessions.expiry_timestamp > now()
-//   `;
-//   return user && camelcaseKeys(user);
-// }
