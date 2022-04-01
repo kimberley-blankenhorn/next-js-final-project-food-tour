@@ -98,21 +98,23 @@ const mainHeaderStyle = css`
 
 const displayFormStyle = css`
   display: flex;
-  justify-content: space-evenly;
-  margin-left: 30px;
+  justify-content: center;
+  margin: auto;
 `;
 
 const rightFormStyle = css`
   display: flex;
-  flex-direction: column;
-  /* align-content: flex-start; */
+  /* flex-direction: column; */
+  align-content: flex-start;
+  margin: 0 auto;
   border: solid 1px red;
 `;
 
 const leftFormStyle = css`
   display: flex;
   flex-direction: column;
-  align-content: center;
+  margin-left: auto;
+
   border: solid 1px red;
 `;
 const restaurantInputStyle = css`
@@ -126,24 +128,24 @@ const formStyle = css`
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    align-content: flex-start;
     width: 18vw;
     font-size: 16px;
     font-weight: 700;
-    margin: 5px;
+    margin-right: 5px;
     input {
       width: 17vw;
-      height: 20px;
+      height: 23px;
       margin: 10px 10px;
       border-radius: 15px;
       border: none;
       overflow: hidden;
-      font-size: 16px;
+      font-size: 14px;
     }
     select {
       width: 18vw;
       height: 4vh;
       border-radius: 30px;
+      margin: 10px 0;
     }
   }
 `;
@@ -176,7 +178,7 @@ const buttonSectionStyle = css`
 // `;
 
 const errorStyle = css`
-  height: 70vh;
+  height: 90vh;
   width: 70vw;
   border-radius: 30px;
   margin: auto;
@@ -246,8 +248,8 @@ export default function CreateTour(props: Props) {
   const [suggestionListDescription, setSuggestionListDescription] =
     useState('');
   const [list, setList] = useState([]);
-  console.log('checking the list', list);
-  console.log('you selected...', suggestionListDescription);
+  // console.log('checking the list', list);
+  // console.log('you selected...', suggestionListDescription);
 
   if ('error' in props) {
     console.log(props.error);
@@ -343,7 +345,7 @@ export default function CreateTour(props: Props) {
               <h1>Create your own suggestion list</h1>
             </div>
             <div css={displayFormStyle}>
-              <div css={rightFormStyle}>
+              <div css={leftFormStyle}>
                 <form
                   css={formStyle}
                   onSubmit={async (e) => {
@@ -469,7 +471,7 @@ export default function CreateTour(props: Props) {
                 </form>
               </div>
 
-              <div css={leftFormStyle}>
+              <div css={rightFormStyle}>
                 <form
                   css={formStyle}
                   onSubmit={async (e) => {
@@ -544,9 +546,9 @@ export default function CreateTour(props: Props) {
                     <button>Submit</button>
                   </div>
                 </form>
-                <div>
+                <div css={formStyle}>
                   <label>
-                    Choose your list you want to show:
+                    Choose the list you want to show:
                     <select
                       onChange={(e) => {
                         setSuggestionListDescription(e.currentTarget.value);
@@ -565,24 +567,35 @@ export default function CreateTour(props: Props) {
                       ))}
                     </select>
                   </label>
-                  <button
-                    onClick={async () => {
-                      let checkingResults;
+                  <div css={buttonSectionStyle}>
+                    <button
+                      onClick={async () => {
+                        let checkingResults;
 
-                      const requestResponse = await fetch(
-                        `/api/displayList?selectedItem=${suggestionListDescription}`,
-                        {
-                          method: 'GET',
-                        },
-                      );
-                      console.log('requesting the list', requestResponse);
-                      // setList([...requestResponse.list]);
-                      return (checkingResults = requestResponse.list);
-                    }}
-                  >
-                    select
-                  </button>
-                  <div>{list}</div>
+                        const requestResponse = await fetch(
+                          `/api/displayList?selectedItem=${suggestionListDescription}`,
+                          {
+                            method: 'GET',
+                          },
+                        );
+                        const listData = await requestResponse.json();
+                        console.log('requesting the list', listData.list);
+                        setList(listData.list);
+
+                        return listData.list;
+                      }}
+                    >
+                      select
+                    </button>
+                  </div>
+                  <div>
+                    List:
+                    {list.map((listItem) => (
+                      <p key={`${Math.random()}-${listItem.name}`}>
+                        {listItem.name}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

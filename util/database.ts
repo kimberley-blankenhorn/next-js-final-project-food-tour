@@ -1,5 +1,6 @@
 import camelcaseKeys from 'camelcase-keys';
 import { config } from 'dotenv-safe';
+import { string } from 'joi';
 import postgres from 'postgres';
 
 config();
@@ -78,7 +79,8 @@ export async function getUserById(id: number) {
     id,
     username,
     first_name,
-    last_name
+    last_name,
+    image
   FROM
     users
   WHERE
@@ -159,7 +161,14 @@ export async function getUserByValidSessionToken(token: string | undefined) {
   const [user] = await sql<[User | undefined]>`
     SELECT
       users.id,
-      users.username
+      users.username,
+      users.first_name,
+      users.last_name,
+      users.email,
+      users.occupation,
+      users.age,
+      users.about,
+      users.image
     FROM
       users,
       sessions
@@ -322,8 +331,56 @@ export async function getSuggestionListWithRestaurantsListId(
   WHERE
   suggestion_list.description = ${suggestionListDescription}
   AND
-  suggestion_list_restaurants.suggestion_list_id = suggestion_list_restaurants.restaurant_id
+  suggestion_list_restaurants.suggestion_list_id = suggestion_list.id
+  AND
+  suggestion_list_restaurants.restaurant_id= restaurant.id
     `;
 
   return camelcaseKeys(listWithRestaurants);
+}
+export type GetAllUsersLists = {
+  id: number;
+  username: string;
+  description: string;
+  image: string;
+};
+export async function getAllUsersLists() {
+  const allUsersLists = await sql<GetAllUsersLists[]>`
+  SELECT
+    *
+  FROM
+    users,
+    suggestion_list
+  WHERE
+    users.image = users.image
+    AND
+    suggestion_list.user_id = users.id
+    AND
+    suggestion_list.description = suggestion_list.description
+`;
+  return allUsersLists.map((allLists) => camelcaseKeys(allLists));
+}
+
+export type GetListByUserId = {
+  id: number;
+  description: string;
+  image: string;
+  restaurant: string;
+};
+
+export async function getListByUserId() {
+  const listByUserId = await sql<GetListByUserId[]>`
+  SELECT
+    *
+  FROM
+    users,
+    suggestion_list
+  WHERE
+    users.image = users.image
+    AND
+    suggestion_list.user_id = users.id
+    AND
+    suggestion_list.description = suggestion_list.description
+
+  `;
 }

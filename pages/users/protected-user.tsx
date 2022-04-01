@@ -3,7 +3,11 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { getUserByValidSessionToken } from '../../util/database';
+import {
+  getUserByValidSessionToken,
+  getUserById,
+  User,
+} from '../../util/database';
 
 const backgroundImage = css`
   background-image: url('/images/viennaNight.jpg');
@@ -25,14 +29,11 @@ const navStyle = css`
     text-decoration: none;
     -webkit-transition: color 1s;
     transition: color 1s;
+    margin: 0 20px;
 
     &:hover {
       color: rgba(102, 199, 186);
     }
-  }
-  a + a {
-    margin: 0 20px;
-    padding: 20px 0;
   }
 `;
 const containerStyle = css`
@@ -86,10 +87,21 @@ const bodyStyles = css`
 
 type Props = {
   userObject: { username: string };
-  user: { id: number; username: string; firstName: string; lastName: string };
+  user: {
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    occupation: string;
+    age: number;
+    about: string;
+    image: string;
+  };
 };
 
 export default function ProtectedUser(props: Props) {
+  console.log(props.user.image);
   return (
     <div css={backgroundImage}>
       <div>
@@ -117,7 +129,7 @@ export default function ProtectedUser(props: Props) {
                   <a>Create Tour</a>
                 </Link>
                 <Link href="/tours">
-                  <a>Tours</a>
+                  <a>Lists</a>
                 </Link>
 
                 <a href="/logout">Logout</a>
@@ -129,12 +141,26 @@ export default function ProtectedUser(props: Props) {
         <section>
           <div>
             <div css={favoriteStyle}>
-              <h1>Favorites</h1>
+              <h1>Profile</h1>
             </div>
 
             <div css={containerStyle}>
               <div>
                 <h2>Welcome {props.user.username}</h2>
+              </div>
+              <img
+                src={props.user.image}
+                alt="profile"
+                height="130px"
+                width="100px"
+              />
+              <div>
+                <p>First Name: {props.user.firstName}</p>
+                <p>Last Name: {props.user.lastName}</p>
+                <p>Occupation: {props.user.occupation}</p>
+                <p>Age: {props.user.age}</p>
+                <p>email: {props.user.email}</p>
+                <p>about: {props.user.about}</p>
               </div>
             </div>
           </div>

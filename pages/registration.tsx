@@ -113,7 +113,7 @@ const aboutSectionStyle = css`
 
 type Errors = { message: string }[];
 
-type Props = { refreshUserProfile: () => void };
+type Props = { refreshUserProfile: () => void; cloudinaryAPI: string };
 
 export default function Registration(props: Props) {
   const [username, setUsername] = useState('');
@@ -124,10 +124,29 @@ export default function Registration(props: Props) {
   const [occupation, setOccupation] = useState('');
   const [age, setAge] = useState('');
   const [image, setImage] = useState('');
+  // const [uploadData, setUploadData] = useState();
   const [about, setAbout] = useState('');
   const [errors, setErrors] = useState<Errors>([]);
   const router = useRouter();
 
+  const uploadImage = async (event: any) => {
+    const files = event.currentTarget.files;
+    const formData = new FormData();
+    formData.append('file', files[0]);
+    formData.append('upload_preset', 'profile_picture');
+
+    const response = await fetch(
+      `	https://api.cloudinary.com/v1_1/${props.cloudinaryAPI}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      },
+    );
+    const file = await response.json();
+    console.log('file url address', file.secure_url);
+
+    setImage(file.secure_url);
+  };
   return (
     <div css={backgroundImage}>
       <div>
@@ -280,12 +299,8 @@ export default function Registration(props: Props) {
               <div css={inputSectionStyle}>
                 <label>
                   Upload an image:
-                  <input
-                    value={image}
-                    type="file"
-                    placeholder="image"
-                    onChange={(event) => setImage(event.currentTarget.value)}
-                  />
+                  <input type="file" name="image" onChange={uploadImage} />
+                  {image}
                 </label>
               </div>
             </div>
@@ -335,6 +350,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
   // 1. Check if there is a token and if it is valid
   const token = context.req.cookies.sessionToken;
+  const cloudinaryAPI = process.env.CLOUDINARY_NAME;
 
   if (token) {
     // 2. If the cookie is valid and redirect.
@@ -352,6 +368,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   // 3. otherwise, render the page
   return {
-    props: {},
+    props: {
+      cloudinaryAPI,
+    },
   };
 }

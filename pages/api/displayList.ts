@@ -4,6 +4,7 @@
 //   ListWithRestaurants,
 // } from '../../util/database';
 
+import { NextApiRequest, NextApiResponse } from 'next';
 import { getSuggestionListWithRestaurantsListId } from '../../util/database';
 
 // type ShowListRequestBody = {
@@ -40,7 +41,10 @@ import { getSuggestionListWithRestaurantsListId } from '../../util/database';
 //   });
 // }
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   console.log('request is', req.query);
   const displayList = await getSuggestionListWithRestaurantsListId(
     req.query.selectedItem,
