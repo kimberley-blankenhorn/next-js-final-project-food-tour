@@ -61,9 +61,7 @@ const loginStyling = css`
     height: 50px;
     width: 200px;
     border-radius: 30px;
-    border: none;
     background-color: rgba(102, 199, 186);
-    color: white;
     font-weight: 600;
     font-size: 16px;
     border: solid 1px white;

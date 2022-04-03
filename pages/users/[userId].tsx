@@ -35,11 +35,7 @@ const containerStyle = css`
   padding-bottom: 20px;
   text-align: center;
   color: white;
-  /* button {
-    margin-top: 50px;
-    height: 50px;
-    width: 200px;
-  } */
+
 `;
 
 const bodyStyles = css`

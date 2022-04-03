@@ -5,14 +5,13 @@ import Layout from '../components/Layout';
 
 const backgroundImage = css`
   background-image: url('/images/sachertorte.jpg');
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh;
 `;
 
 const landingPageTextStyle = css`
-  width: 100vw;
-  height: 93vh;
+  margin-top: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,7 +24,6 @@ const viewToursStyle = css`
   width: 50vw;
   color: white;
   justify-content: center;
-
   text-align: center;
   padding-bottom: 30px;
   h1 {
@@ -46,11 +44,8 @@ const viewToursStyle = css`
       border-radius: 30px;
       font-size: 18px;
       background-color: #66c6ba;
-      color: white;
       font-weight: 700;
-      border: none;
       box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
-
       &:hover {
         -webkit-box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
         box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);

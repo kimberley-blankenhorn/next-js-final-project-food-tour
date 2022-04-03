@@ -62,7 +62,6 @@ const listStyles = css`
   a {
     text-decoration: none;
     text-align: center;
-    /* margin-left: 55px; */
     color: rgb(11, 3, 0);
     font-size: 25px;
     &:hover {
@@ -87,11 +86,9 @@ const listStyles = css`
     height: 5vh;
     width: 10vw;
     border-radius: 30px;
-    border: none;
     background-color: rgba(102, 199, 186);
     font-size: 14px;
     font-weight: 700;
-    color: white;
     box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
 
     &:hover {

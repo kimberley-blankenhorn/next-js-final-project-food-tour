@@ -49,7 +49,7 @@ const containerStyle = css`
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
   }
   h1 {
-    font-size: 28px;
+    font-size: 35px;
     line-height: 28px;
     text-align: center;
   }
@@ -57,6 +57,7 @@ const containerStyle = css`
 const mainHeaderStyle = css`
   display: flex;
   justify-content: center;
+  font-size: 28px;
 `;
 
 // FORM SECTION:
@@ -124,9 +125,7 @@ const buttonSectionStyle = css`
     height: 3vh;
     width: 8vw;
     border-radius: 30px;
-    border: none;
     background-color: rgba(102, 199, 186);
-    color: white;
     box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     &:hover {
       -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);

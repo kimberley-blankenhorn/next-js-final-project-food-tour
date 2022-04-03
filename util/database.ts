@@ -1,10 +1,39 @@
 import camelcaseKeys from 'camelcase-keys';
 import { config } from 'dotenv-safe';
 import postgres from 'postgres';
+import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
+
+setPostgresDefaultsOnHeroku();
 
 config();
+
+// Type needed for the connection function below
+declare module globalThis {
+  let postgresSqlClient: ReturnType<typeof postgres> | undefined;
+}
+
+// Connect only once to the database
+// https://github.com/vercel/next.js/issues/7811#issuecomment-715259370
+function connectOneTimeToDatabase() {
+  let sql;
+
+  if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
+    sql = postgres();
+    // Heroku needs SSL connections but
+    // has an "unauthorized" certificate
+    // https://devcenter.heroku.com/changelog-items/852
+    sql = postgres({ ssl: { rejectUnauthorized: false } });
+  } else {
+    if (!globalThis.postgresSqlClient) {
+      globalThis.postgresSqlClient = postgres();
+    }
+    sql = globalThis.postgresSqlClient;
+  }
+  return sql;
+}
 // CONNECT TO POSTGRESQL
-const sql = postgres();
+const sql = connectOneTimeToDatabase();
+
 export async function readUsers() {
   const users = await sql`
 SELECT * FROM users
@@ -12,6 +41,20 @@ SELECT * FROM users
   return users;
 }
 
+// module.exports = function setPostgresDefaultsOnHeroku() {
+//   if (process.env.DATABASE_URL) {
+//     const { parse } = require('pg-connection-string');
+
+//     // Extract the connection information from the Heroku environment variable
+//     const { host, database, user, password } = parse(process.env.DATABASE_URL);
+
+//     // Set standard environment variables
+//     process.env.PGHOST = host;
+//     process.env.PGDATABASE = database;
+//     process.env.PGUSERNAME = user;
+//     process.env.PGPASSWORD = password;
+//   }
+// };
 // User section: Create and Get...Need to update and delete
 
 export type User = {

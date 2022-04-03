@@ -39,9 +39,7 @@ const containerStyle = css`
     height: 6vh;
     width: 12vw;
     border-radius: 30px;
-    border: none;
     background-color: rgba(102, 199, 186);
-    color: white;
     box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     &:hover {
       -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);

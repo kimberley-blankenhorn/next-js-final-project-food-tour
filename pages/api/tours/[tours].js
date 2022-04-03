@@ -32,11 +32,6 @@ const containerStyle = css`
   margin: auto;
   padding-bottom: 20px;
   text-align: center;
-  /* button {
-    margin-top: 50px;
-    height: 50px;
-    width: 200px;
-  } */
 `;
 
 const bodyStyles = css`

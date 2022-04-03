@@ -125,7 +125,6 @@ const listCardsStyle = css`
   button {
     height: 5vh;
     width: 6vw;
-    border: solid 1px white;
     border-radius: 30px;
     margin: 0 3px;
     font-size: 16px;
@@ -145,7 +144,7 @@ const listCardsStyle = css`
 `;
 const deleteButtonStyle = css`
   background-color: rgba(241, 161, 175, 0.6);
-  color: white;
+
   font-weight: 700;
   &:hover {
     -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
@@ -156,7 +155,7 @@ const deleteButtonStyle = css`
 `;
 const toTourButtonStyle = css`
   background-color: rgba(102, 199, 186, 0.6);
-  color: white;
+
   font-weight: 700;
   &:hover {
     -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);

@@ -10,10 +10,10 @@ const navStyle = css`
   display: flex;
   justify-content: space-between;
   height: 70px;
-  background-color: rgb(203, 204, 204, 0.8);
+  background-color: rgba(91, 87, 87, 0.6);
   margin-bottom: 50px;
   a {
-    color: black;
+    color: white;
     font-weight: 700;
     text-decoration: none;
     -webkit-transition: color 1s;
@@ -23,8 +23,8 @@ const navStyle = css`
     margin: 0 20px;
 
     &:hover {
-      color: rgba(102, 199, 186);
-      border-color: rgba(102, 199, 186);
+      color: white;
+      border-color: white;
     }
   }
 `;
@@ -35,7 +35,7 @@ const logoStyle = css`
   /* width: 100vw; */
   color: rgb(26, 19, 18);
   a {
-    color: black;
+    color: white;
     font-weight: 700;
     text-decoration: none;
     -webkit-transition: color 1s;
@@ -59,6 +59,7 @@ const bodyStyles = css`
     font-size: 16px;
     font-weight: 700;
     font-style: italic;
+    color: white;
   }
 `;
 

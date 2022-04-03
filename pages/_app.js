@@ -41,6 +41,8 @@ function MyApp({ Component, pageProps }) {
               font-family: 'Cormorant Garamond', serif;
               font-size: 17px;
               font-weight: 800;
+              color: rgb(56, 56, 53);
+              border: solid 1px white;
             }
             h1 {
               font-family: 'Dancing Script', cursive;

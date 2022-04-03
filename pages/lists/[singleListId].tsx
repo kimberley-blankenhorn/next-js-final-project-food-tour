@@ -63,7 +63,7 @@ const leftSection = css`
     border-radius: 20px;
   }
   button {
-    background-color: rgba(241, 161, 175, 0.6);
+    background-color: rgba(102, 199, 186);
     height: 6vh;
     width: 12vw;
     border-radius: 30px;
@@ -71,7 +71,6 @@ const leftSection = css`
     color: rgb(56, 56, 53);
     font-weight: 700;
     font-size: 16px;
-    border: solid 1px white;
     &:hover {
       -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
       box-shadow: 0px 0px 3px 6px rgba(235, 229, 234, 0.81);
