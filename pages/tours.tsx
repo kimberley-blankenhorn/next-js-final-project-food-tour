@@ -2,7 +2,6 @@ import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { GetServerSidePropsContext } from 'next';
 import { GetAllUsersLists, getAllUsersLists } from '../util/database';
 
 const backgroundImage = css`
@@ -155,7 +154,7 @@ export default function Tours(props: Props) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps() {
   const getAllListsFromUsers = await getAllUsersLists();
   console.log('looking for id', getAllUsersLists);
 
