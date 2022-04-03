@@ -1,6 +1,4 @@
-/* eslint-disable import/no-unresolved */
 import { NextApiRequest, NextApiResponse } from 'next';
-// eslint-disable-next-line import/no-unresolved
 import { getAllUsersLists } from '../../util/database';
 
 export default async function handler(
