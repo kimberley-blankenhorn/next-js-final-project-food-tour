@@ -5,21 +5,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import {
-  createSuggestionList,
-  createSuggestionListWithRestaurants,
-  deleteSessionsByToken,
   getAllRestaurants,
   getAllSuggestionListDescriptions,
-  getRestaurantById,
-  getSuggestionListWithRestaurantsListId,
   getUserByValidSessionToken,
-  getValidSessionsByToken,
-  ListWithRestaurants,
   Restaurant,
   SuggestionList,
-  User,
 } from '../util/database';
 import { CreateCompleteListResponseBody } from './api/createList';
+import { SingleList } from './api/displayList';
 import { CreateRestaurantResponseBody } from './api/restaurant';
 import { CreateSuggestionListDescriptionResponseBody } from './api/tourDescription';
 
@@ -29,36 +22,6 @@ const backgroundImage = css`
   background-repeat: no-repeat;
   height: 100vh;
   width: 100vw;
-`;
-
-const navStyle = css`
-  display: flex;
-  justify-content: space-between;
-  height: 70px;
-  background-color: rgb(203, 204, 204, 0.3);
-  margin-bottom: 50px;
-  a {
-    color: white;
-    font-weight: 700;
-    text-decoration: none;
-    -webkit-transition: color 1s;
-    border-bottom: 1px solid transparent;
-
-    transition: all ease-in-out 0.5s;
-    margin: 0 20px;
-
-    &:hover {
-      color: rgba(102, 199, 186);
-      border-color: rgba(102, 199, 186);
-    }
-  }
-`;
-
-const bodyStyles = css`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  color: rgb(26, 19, 18);
 `;
 
 const containerStyle = css`
@@ -71,15 +34,18 @@ const containerStyle = css`
   background-color: rgb(128, 128, 128, 0.8);
   color: white;
   overflow: auto;
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   ::-webkit-scrollbar {
     width: 12px;
   }
   ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
   }
   h1 {
@@ -91,34 +57,15 @@ const containerStyle = css`
 const mainHeaderStyle = css`
   display: flex;
   justify-content: center;
-
-  /* width: 90vw; */
-  /* width: 100vw; */
 `;
+
+// FORM SECTION:
 
 const displayFormStyle = css`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin: auto;
-`;
-
-const rightFormStyle = css`
-  display: flex;
-  /* flex-direction: column; */
-  align-content: flex-start;
-  margin: 0 auto;
-  border: solid 1px red;
-`;
-
-const leftFormStyle = css`
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
-
-  border: solid 1px red;
-`;
-const restaurantInputStyle = css`
-  display: flex;
 `;
 
 const formStyle = css`
@@ -132,6 +79,7 @@ const formStyle = css`
     font-size: 16px;
     font-weight: 700;
     margin-right: 5px;
+
     input {
       width: 17vw;
       height: 23px;
@@ -140,19 +88,36 @@ const formStyle = css`
       border: none;
       overflow: hidden;
       font-size: 14px;
+      box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     }
     select {
       width: 18vw;
       height: 4vh;
       border-radius: 30px;
       margin: 10px 0;
+      box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     }
   }
 `;
 
+const topFormStyle = css`
+  display: flex;
+  justify-content: space-evenly;
+`;
+
+const bottomFormStyle = css`
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 50px;
+`;
+
+const restaurantInputStyle = css`
+  display: flex;
+`;
+
 const buttonSectionStyle = css`
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
 
   button {
     margin: 5px 20px;
@@ -161,10 +126,8 @@ const buttonSectionStyle = css`
     border-radius: 30px;
     border: none;
     background-color: rgba(102, 199, 186);
-    font-size: 14px;
-    font-weight: 700;
     color: white;
-
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     &:hover {
       -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
       box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
@@ -173,17 +136,22 @@ const buttonSectionStyle = css`
     }
   }
 `;
-// const listNameStyle = css`
-//   margin-left: 10px;
-// `;
+
+const displayListStyle = css`
+  background-color: rgba(86, 86, 83, 0.7);
+  border: solid 2px white;
+  width: 30vw;
+  text-align: center;
+  border-radius: 30px;
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+`;
 
 const errorStyle = css`
-  height: 90vh;
+  height: 70vh;
   width: 70vw;
   border-radius: 30px;
   margin: auto;
   padding-bottom: 20px;
-
   background-color: rgb(128, 128, 128, 0.8);
   color: white;
   text-align: center;
@@ -191,9 +159,11 @@ const errorStyle = css`
   align-content: center;
   justify-content: center;
   align-items: center;
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   a {
     color: white;
     font-weight: 700;
+    font-size: 20px;
     text-decoration: none;
     -webkit-transition: color 1s;
     transition: color 0.5s;
@@ -210,27 +180,13 @@ const errorStyle = css`
   }
 `;
 
-type Props =
-  | {
-      userObject: { username: string };
-      restaurant: Restaurant;
-      getAllRestaurantNames: Restaurant[];
-      listWithRestaurants: ListWithRestaurants;
-      suggestionListRestaurantsId: { id: number }[];
-      getAllLists: { id: number; description: string; userId: string }[];
-      getAllRestaurants: [
-        {
-          id: number;
-          name: string;
-          address: string;
-          type: string;
-          url: string;
-        },
-      ];
-    }
-  | {
-      error: string;
-    };
+type Props = {
+  userId: number;
+  userObject: { username: string };
+  getAllRestaurantNames: Restaurant[];
+  error?: string;
+  getAllLists: { id: number; description: string; userId: string }[];
+};
 
 export default function CreateTour(props: Props) {
   const [name, setName] = useState('');
@@ -238,7 +194,6 @@ export default function CreateTour(props: Props) {
   const [type, setType] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
-  // const [restaurantNew, setRestaurantNew] = useState('');
   const [selectedDescription, setSelectedDescription] = useState<number>(0);
   const [selectedRestaurant, setSelectedRestaurant] = useState<number>(0);
   const [restaurantNames, setRestaurantNames] = useState(
@@ -247,15 +202,14 @@ export default function CreateTour(props: Props) {
   const [listDescriptions, setListDescriptions] = useState(props.getAllLists);
   const [suggestionListDescription, setSuggestionListDescription] =
     useState('');
-  const [list, setList] = useState([]);
-  // console.log('checking the list', list);
-  // console.log('you selected...', suggestionListDescription);
+  const [list, setList] = useState<SingleList[]>([]);
 
   if ('error' in props) {
     console.log(props.error);
     return (
       <div css={backgroundImage}>
         <div>
+          <Layout />
           <Head>
             <title>FoodiesUnited - A Restaurant Sharing Website</title>
             <meta
@@ -264,28 +218,7 @@ export default function CreateTour(props: Props) {
             />
             <link rel="icon" href="/favicon.ico" />
           </Head>
-          <nav>
-            <div css={navStyle}>
-              <div css={bodyStyles}>
-                <Link href="/">
-                  <a>FoodiesUnited</a>
-                </Link>
-              </div>
-              <div css={bodyStyles}>
-                <Layout>
-                  <Link href="/tours">
-                    <a>Restaurant Lists</a>
-                  </Link>
-                  <Link href="/login">
-                    <a>Login</a>
-                  </Link>
-                  <Link href="/registration">
-                    <a>Register</a>
-                  </Link>
-                </Layout>
-              </div>
-            </div>
-          </nav>
+
           <section css={errorStyle}>
             <div>
               <div>
@@ -310,6 +243,7 @@ export default function CreateTour(props: Props) {
   return (
     <div css={backgroundImage}>
       <div>
+        <Layout userObject={props.userObject} />
         <Head>
           <title>FoodiesUnited - A Restaurant Sharing Website</title>
           <meta
@@ -318,34 +252,14 @@ export default function CreateTour(props: Props) {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <nav>
-          <div css={navStyle}>
-            <div css={bodyStyles}>
-              <Link href="/">
-                <a>FoodiesUnited</a>
-              </Link>
-            </div>
-            <div css={bodyStyles}>
-              <Layout userObject={props.userObject}>
-                <Link href="/tours">
-                  <a>Restaurant Lists</a>
-                </Link>
-                <Link href="/users/protected-user">
-                  <a>Profile</a>
-                </Link>
 
-                <a href="/logout">Logout</a>
-              </Layout>
-            </div>
-          </div>
-        </nav>
         <section css={containerStyle}>
           <div>
             <div css={mainHeaderStyle}>
               <h1>Create your own suggestion list</h1>
             </div>
             <div css={displayFormStyle}>
-              <div css={leftFormStyle}>
+              <div css={topFormStyle}>
                 <form
                   css={formStyle}
                   onSubmit={async (e) => {
@@ -367,6 +281,14 @@ export default function CreateTour(props: Props) {
                     const createSuggestionListDescriptionResponseBody =
                       (await createSuggestionListDescriptionResponse.json()) as CreateSuggestionListDescriptionResponseBody;
                     console.log(createSuggestionListDescriptionResponseBody);
+                    if (
+                      'errors' in createSuggestionListDescriptionResponseBody
+                    ) {
+                      console.log(
+                        createSuggestionListDescriptionResponseBody.errors,
+                      );
+                      return;
+                    }
                     const newSuggestionListDescriptionArray = [
                       ...listDescriptions,
                       createSuggestionListDescriptionResponseBody.suggestionList,
@@ -413,6 +335,10 @@ export default function CreateTour(props: Props) {
                     const createRestaurantResponseBody =
                       (await createRestaurantResponse.json()) as CreateRestaurantResponseBody;
                     console.log(createRestaurantResponseBody);
+                    if ('errors' in createRestaurantResponseBody) {
+                      console.log(createRestaurantResponseBody.errors);
+                      return;
+                    }
                     const newRestaurantArray = [
                       ...restaurantNames,
                       createRestaurantResponseBody.restaurant,
@@ -469,9 +395,7 @@ export default function CreateTour(props: Props) {
                     <button>Add</button>
                   </div>
                 </form>
-              </div>
 
-              <div css={rightFormStyle}>
                 <form
                   css={formStyle}
                   onSubmit={async (e) => {
@@ -511,7 +435,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {listDescriptions.map((singleList: SuggestionList) => (
                           <option
-                            key={`single-${singleList.id}`}
+                            key={`Math.random()-${singleList.id}`}
                             value={singleList.id}
                           >
                             {singleList.description}
@@ -533,7 +457,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {restaurantNames.map((singleRestaurant: Restaurant) => (
                           <option
-                            key={`single-${singleRestaurant.id}`}
+                            key={`Math.random()-${singleRestaurant.id}`}
                             value={singleRestaurant.id}
                           >
                             {singleRestaurant.name}
@@ -546,6 +470,8 @@ export default function CreateTour(props: Props) {
                     <button>Submit</button>
                   </div>
                 </form>
+              </div>
+              <div css={bottomFormStyle}>
                 <div css={formStyle}>
                   <label>
                     Choose the list you want to show:
@@ -559,7 +485,7 @@ export default function CreateTour(props: Props) {
                       </option>
                       {listDescriptions.map((singleList: SuggestionList) => (
                         <option
-                          key={`single-${singleList.id}`}
+                          key={`Math.random()-${singleList.id}`}
                           value={singleList.description}
                         >
                           {singleList.description}
@@ -570,8 +496,6 @@ export default function CreateTour(props: Props) {
                   <div css={buttonSectionStyle}>
                     <button
                       onClick={async () => {
-                        let checkingResults;
-
                         const requestResponse = await fetch(
                           `/api/displayList?selectedItem=${suggestionListDescription}`,
                           {
@@ -585,51 +509,22 @@ export default function CreateTour(props: Props) {
                         return listData.list;
                       }}
                     >
-                      select
+                      Select
                     </button>
                   </div>
-                  <div>
-                    List:
-                    {list.map((listItem) => (
-                      <p key={`${Math.random()}-${listItem.name}`}>
-                        {listItem.name}
-                      </p>
-                    ))}
-                  </div>
+                </div>
+                <div css={displayListStyle}>
+                  <h2>List:</h2>
+                  <hr />
+                  {list.map((listItem) => (
+                    <div key={`${Math.random()}-${listItem.name}`}>
+                      <p>{listItem.name}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-          {/* <table>
-            <tbody>
-              <tr>
-                <th />
-                <th>Restaurant Name</th>
-                <th>Cuisine type</th>
-                <th>URL</th>
-              </tr>
-
-              {getAllListsWithRestaurants.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.description}</td>
-                  <td>{item.name}</td>
-
-                  <td>
-                    <div>
-                      <button
-                      // type="button"
-                      // aria-label="Remove restaurant"
-                      // onClick={() => handleDelete(item.id)}
-                      // id="delete"
-                      >
-                        Remove restaurant
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table> */}
         </section>
       </div>
     </div>
@@ -642,6 +537,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const sessionToken = context.req.cookies.sessionToken;
   const session = await getUserByValidSessionToken(sessionToken);
   console.log('context query', context.query);
+  console.log('get all the restaurant names', getAllRestaurantNames);
+
   if (!session) {
     return {
       props: {

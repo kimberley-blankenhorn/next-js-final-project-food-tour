@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../components/Layout';
@@ -20,20 +19,6 @@ const backgroundImage = css`
   max-width: 100%;
 `;
 
-const navStyle = css`
-  display: flex;
-  justify-content: space-between;
-  a {
-    color: white;
-    font-weight: 700;
-    text-decoration: none;
-  }
-  a + a {
-    margin: 0 20px;
-    padding: 20px 0;
-  }
-`;
-
 const containerStyle = css`
   height: 89vh;
   width: 90vw;
@@ -43,26 +28,32 @@ const containerStyle = css`
   text-align: center;
   background-color: rgb(128, 128, 128, 0.8);
   color: white;
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+  h1 {
+    padding-top: 20px;
+    font-size: 32px;
+  }
 
   button {
-    margin-top: 50px;
-    height: 50px;
-    width: 200px;
+    margin: 15px 20px;
+    height: 6vh;
+    width: 12vw;
+    border-radius: 30px;
+    border: none;
+    background-color: rgba(102, 199, 186);
+    color: white;
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+    &:hover {
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
+      box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
+      -webkit-transition: box-shadow 0.3s ease-in-out;
+      transition: box-shadow 0.3s ease-in-out;
+    }
   }
-`;
-
-const bodyStyles = css`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  /* width: 100vw; */
-  border: solid red 1px;
-  color: rgb(26, 19, 18);
 `;
 
 const inputContainerStyle = css`
   display: flex;
-  /* width: 100%; */
 `;
 
 const inputSectionStyle = css`
@@ -85,6 +76,8 @@ const inputSectionStyle = css`
       height: 35px;
       border-radius: 30px;
       text-align: center;
+      border: none;
+      box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     }
   }
 `;
@@ -100,6 +93,7 @@ const aboutSectionStyle = css`
     align-items: center;
     justify-content: center;
     width: 90%;
+
     input {
       display: flex;
       justify-content: center;
@@ -107,13 +101,19 @@ const aboutSectionStyle = css`
       height: 85px;
       border-radius: 30px;
       text-align: center;
+      border: none;
+      box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     }
   }
 `;
 
 type Errors = { message: string }[];
 
-type Props = { refreshUserProfile: () => void; cloudinaryAPI: string };
+type Props = {
+  refreshUserProfile: () => void;
+  cloudinaryAPI: string;
+  userObject: { username: string };
+};
 
 export default function Registration(props: Props) {
   const [username, setUsername] = useState('');
@@ -150,6 +150,7 @@ export default function Registration(props: Props) {
   return (
     <div css={backgroundImage}>
       <div>
+        <Layout userObject={props.userObject} />
         <Head>
           <title>FoodiesUnited - A Restaurant Sharing Website</title>
           <meta
@@ -158,28 +159,7 @@ export default function Registration(props: Props) {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <nav>
-          <Layout>
-            <div css={navStyle}>
-              <div css={bodyStyles}>
-                <Link href="/">
-                  <a>FoodiesUnited</a>
-                </Link>
-              </div>
-              <div css={bodyStyles}>
-                <Link href="/createTour">
-                  <a>Create Tour</a>
-                </Link>
-                <Link href="/tours">
-                  <a>Tours</a>
-                </Link>
-                <Link href="/login">
-                  <a>Login</a>
-                </Link>
-              </div>
-            </div>
-          </Layout>
-        </nav>
+
         <section css={containerStyle}>
           <h1>Register</h1>
           <form
@@ -300,7 +280,6 @@ export default function Registration(props: Props) {
                 <label>
                   Upload an image:
                   <input type="file" name="image" onChange={uploadImage} />
-                  {image}
                 </label>
               </div>
             </div>

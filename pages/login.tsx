@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../components/Layout';
@@ -20,35 +19,6 @@ const backgroundImage = css`
   width: 100vw;
 `;
 
-const navStyle = css`
-  display: flex;
-  justify-content: space-between;
-  height: 70px;
-  background-color: rgb(203, 204, 204, 0.9);
-  margin-bottom: 50px;
-  a {
-    color: white;
-    font-weight: 700;
-    text-decoration: none;
-    -webkit-transition: color 1s;
-    border-bottom: 1px solid transparent;
-
-    transition: all ease-in-out 0.5s;
-    margin: 0 20px;
-
-    &:hover {
-      color: rgba(102, 199, 186);
-      border-color: rgba(102, 199, 186);
-    }
-  }
-`;
-const bodyStyles = css`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  color: rgb(26, 19, 18);
-`;
-
 const loginStyling = css`
   display: flex;
   flex-direction: column;
@@ -58,10 +28,14 @@ const loginStyling = css`
   justify-content: center;
   align-items: center;
   align-content: center;
-
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   background-color: rgb(128, 128, 128, 0.7);
   color: white;
   border-radius: 30px;
+  h1 {
+    padding-top: 20px;
+    font-size: 32px;
+  }
 
   label {
     display: flex;
@@ -92,9 +66,11 @@ const loginStyling = css`
     color: white;
     font-weight: 600;
     font-size: 16px;
+    border: solid 1px white;
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
     &:hover {
-      -webkit-box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
-      box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(218, 238, 238, 0.61);
+      box-shadow: 0px 0px 3px 8px rgba(208, 224, 224, 0.61);
       -webkit-transition: box-shadow 0.3s ease-in-out;
       transition: box-shadow 0.3s ease-in-out;
     }
@@ -102,6 +78,11 @@ const loginStyling = css`
 `;
 
 type Errors = { message: string }[];
+type Props = {
+  userObject: { username: string };
+  refreshUserProfile: () => void;
+  // cloudinaryAPI: string;
+};
 
 export default function Login(props: Props) {
   const [username, setUsername] = useState('');
@@ -110,101 +91,81 @@ export default function Login(props: Props) {
   const router = useRouter();
   return (
     <div css={backgroundImage}>
-      <Layout>
-        <Head>
-          <title>Login</title>
-          <meta name="description" content="Login here for this website" />
-        </Head>
-        <nav>
-          <div css={navStyle}>
-            <div css={bodyStyles}>
-              <Link href="/">
-                <a>FoodiesUnited</a>
-              </Link>
+      <Layout userObject={props.userObject} />
+      <Head>
+        <title>Login</title>
+        <meta name="description" content="Login here for this website" />
+      </Head>
+
+      <div>
+        <div css={loginStyling}>
+          <h1>Login</h1>
+          <form
+            onSubmit={async (event) => {
+              event.preventDefault();
+
+              const loginResponse = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: username,
+                  password: password,
+                }),
+              });
+
+              const loginResponseBody = await loginResponse.json();
+
+              if ('errors' in loginResponseBody) {
+                setErrors(loginResponseBody.errors);
+                return;
+              }
+
+              const returnTo = router.query.returnTo;
+
+              if (
+                returnTo &&
+                !Array.isArray(returnTo) &&
+                /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
+              ) {
+                await router.push(returnTo);
+                return;
+              }
+              props.refreshUserProfile();
+              await router.push('/users/protected-user');
+            }}
+          >
+            <div>
+              <label>
+                Username:
+                <input
+                  value={username}
+                  placeholder="Username"
+                  onChange={(event) => setUsername(event.currentTarget.value)}
+                />
+              </label>
+
+              <label>
+                Password:
+                <input
+                  value={password}
+                  type="password"
+                  placeholder="Password"
+                  onChange={(event) => setPassword(event.currentTarget.value)}
+                />
+              </label>
+
+              <button>Login</button>
             </div>
-            <div css={bodyStyles}>
-              <Link href="/createTour">
-                <a>Create Tour</a>
-              </Link>
-              <Link href="/tours">
-                <a>Tours</a>
-              </Link>
-              <Link href="/registration">
-                <a>Register</a>
-              </Link>
-            </div>
-          </div>
-        </nav>
-        <div>
-          <div css={loginStyling}>
-            <h1>Login</h1>
-            <form
-              onSubmit={async (event) => {
-                event.preventDefault();
-
-                const loginResponse = await fetch('/api/login', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    username: username,
-                    password: password,
-                  }),
-                });
-
-                const loginResponseBody = await loginResponse.json();
-
-                if ('errors' in loginResponseBody) {
-                  setErrors(loginResponseBody.errors);
-                  return;
-                }
-
-                const returnTo = router.query.returnTo;
-
-                if (
-                  returnTo &&
-                  !Array.isArray(returnTo) &&
-                  /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
-                ) {
-                  await router.push(returnTo);
-                  return;
-                }
-                props.refreshUserProfile();
-                await router.push('/users/protected-user');
-              }}
-            >
-              <div>
-                <label>
-                  Username:
-                  <input
-                    value={username}
-                    placeholder="Username"
-                    onChange={(event) => setUsername(event.currentTarget.value)}
-                  />
-                </label>
-
-                <label>
-                  Password:
-                  <input
-                    value={password}
-                    type="password"
-                    placeholder="Password"
-                    onChange={(event) => setPassword(event.currentTarget.value)}
-                  />
-                </label>
-
-                <button>Login</button>
-              </div>
-            </form>
-          </div>
-          <div css={errorStyles}>
-            {errors.map((error) => {
-              return <div key={`error-${error.message}`}>{error.message}</div>;
-            })}
-          </div>
+          </form>
         </div>
-      </Layout>
+        <div css={errorStyles}>
+          {errors.map((error) => {
+            return <div key={`error-${error.message}`}>{error.message}</div>;
+          })}
+        </div>
+      </div>
     </div>
   );
 }

@@ -28,13 +28,28 @@ function MyApp({ Component, pageProps }) {
         styles={css`
           html,
           body {
+            padding: 0;
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-              Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-              sans-serif;
-          }
-          main {
-            margin: 0;
+
+            font-family: 'Dancing Script', cursive;
+            font-family: 'Hind Guntur', sans-serif;
+
+            main {
+              margin: 0;
+            }
+            button {
+              font-family: 'Cormorant Garamond', serif;
+              font-size: 17px;
+              font-weight: 800;
+            }
+            h1 {
+              font-family: 'Dancing Script', cursive;
+            }
+
+            h2,
+            h4 {
+              font-family: 'Playfair Display', serif;
+            }
           }
         `}
       />

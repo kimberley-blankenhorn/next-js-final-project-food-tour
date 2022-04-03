@@ -3,12 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import { GetServerSidePropsContext } from 'next';
-import {
-  GetAllUsersLists,
-  getAllUsersLists,
-  getUserByValidSessionToken,
-} from '../util/database';
-import Image from 'next/image';
+import { GetAllUsersLists, getAllUsersLists } from '../util/database';
 
 const backgroundImage = css`
   background-image: url('/images/ferris-wheel.jpg');
@@ -19,28 +14,6 @@ const backgroundImage = css`
   width: 100vw;
 `;
 
-const navStyle = css`
-  display: flex;
-  justify-content: space-between;
-  height: 70px;
-  background-color: rgb(203, 204, 204, 0.9);
-  margin-bottom: 50px;
-  a {
-    color: black;
-    font-weight: 700;
-    text-decoration: none;
-    -webkit-transition: color 1s;
-    border-bottom: 1px solid transparent;
-
-    transition: all ease-in-out 0.5s;
-    margin: 0 20px;
-
-    &:hover {
-      color: rgba(102, 199, 186);
-      border-color: rgba(102, 199, 186);
-    }
-  }
-`;
 const containerStyle = css`
   height: 75vh;
   width: 90vw;
@@ -48,22 +21,26 @@ const containerStyle = css`
   margin: auto;
   padding-bottom: 20px;
   text-align: center;
-  background-color: rgb(128, 128, 128, 0.5);
+  background-color: rgb(128, 128, 128, 0.9);
   color: white;
   overflow: auto;
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   ::-webkit-scrollbar {
     width: 12px;
   }
   ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
   }
   h1 {
     font-size: 35px;
+    color: #f7fcfc;
   }
 `;
 const listStyles = css`
@@ -77,7 +54,8 @@ const listStyles = css`
   margin: 20px 30px;
   width: 200px;
   height: 300px;
-  background-color: rgb(91, 89, 89, 0.8);
+  background-color: rgb(91, 89, 89, 0.6);
+  box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   /* opacity: 0.5; */
 
   cursor: pointer;
@@ -100,6 +78,9 @@ const listStyles = css`
   }
   img {
     border-radius: 20px;
+    object-fit: cover;
+    height: 130px;
+    width: 100px;
   }
   button {
     margin: 5px 20px;
@@ -111,6 +92,7 @@ const listStyles = css`
     font-size: 14px;
     font-weight: 700;
     color: white;
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
 
     &:hover {
       -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
@@ -120,20 +102,12 @@ const listStyles = css`
     }
   }
 `;
-const bodyStyles = css`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  /* width: 100vw; */
-  color: rgb(26, 19, 18);
-`;
+
 const listCardsStyle = css`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
-
   margin: 40px;
-  border: solid 1px green;
 `;
 
 type Props = {
@@ -145,6 +119,7 @@ export default function Tours(props: Props) {
   return (
     <div css={backgroundImage}>
       <div>
+        <Layout userObject={props.userObject} />
         <Head>
           <title>FoodiesUnited - A Restaurant Sharing Website</title>
           <meta
@@ -153,50 +128,23 @@ export default function Tours(props: Props) {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <nav>
-          <div css={navStyle}>
-            <div css={bodyStyles}>
-              <Link href="/">
-                <a>FoodiesUnited</a>
-              </Link>
-            </div>
 
-            <div css={bodyStyles}>
-              <Layout userObject={props.userObject}>
-                <Link href="/createTour">
-                  <a>Create List</a>
-                </Link>
-                <Link href="/tours">
-                  <a>Lists</a>
-                </Link>
-                <Link href="/users/protected-user">
-                  <a>Profile</a>
-                </Link>
-                <Link href="/login">
-                  <a>Login</a>
-                </Link>
-              </Layout>
-            </div>
-          </div>
-        </nav>
         <div css={containerStyle}>
           <h1>Recommendation Lists</h1>
           <div css={listCardsStyle}>
             {props.getAllListsFromUsers.map((listAll) => {
+              console.log('check the id', listAll.username, listAll.id);
               return (
-                <div key={`listAll-${listAll.id}`}>
+                <div key={`Math.random()-${listAll.id}`}>
                   <div css={listStyles}>
-                    <img
-                      src={listAll.image}
-                      alt="profile"
-                      height="130px"
-                      width="100px"
-                    />
+                    <img src={listAll.image} alt="profile" />
                     <p>{listAll.username}'s favorite</p>
                     <p>{listAll.description}</p>
                     <Link href={`/lists/${listAll.id}`}>
                       <a>
-                        <button>To Tour</button>
+                        <div>
+                          <button>To List</button>
+                        </div>
                       </a>
                     </Link>
                   </div>
@@ -212,6 +160,7 @@ export default function Tours(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const getAllListsFromUsers = await getAllUsersLists();
+  console.log('looking for id', getAllUsersLists);
 
   return {
     props: {

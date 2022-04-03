@@ -1,6 +1,5 @@
 import camelcaseKeys from 'camelcase-keys';
 import { config } from 'dotenv-safe';
-import { string } from 'joi';
 import postgres from 'postgres';
 
 config();
@@ -318,10 +317,12 @@ export async function createSuggestionListWithRestaurants(
 
 // Get suggestion list with restaurants
 
+export type List = string;
+
 export async function getSuggestionListWithRestaurantsListId(
   suggestionListDescription: string,
 ) {
-  const listWithRestaurants = await sql<[ListWithRestaurants]>`
+  const listWithRestaurants = await sql<List[]>`
   SELECT
     restaurant.name
   FROM
@@ -336,8 +337,11 @@ export async function getSuggestionListWithRestaurantsListId(
   suggestion_list_restaurants.restaurant_id= restaurant.id
     `;
 
-  return camelcaseKeys(listWithRestaurants);
+  return listWithRestaurants.map((listWithRestaurant) =>
+    camelcaseKeys(listWithRestaurant),
+  );
 }
+
 export type GetAllUsersLists = {
   id: number;
   username: string;
@@ -361,26 +365,38 @@ export async function getAllUsersLists() {
   return allUsersLists.map((allLists) => camelcaseKeys(allLists));
 }
 
-export type GetListByUserId = {
-  id: number;
-  description: string;
+export type GetSingleTourByDescription = {
+  name: string;
+  type: string;
+  username: string;
   image: string;
-  restaurant: string;
+  description: string;
 };
-
-export async function getListByUserId() {
-  const listByUserId = await sql<GetListByUserId[]>`
+export async function getSingleTourByDescription(id: number) {
+  const singleRestaurantListByUser = await sql<GetSingleTourByDescription[]>`
   SELECT
-    *
-  FROM
-    users,
-    suggestion_list
-  WHERE
-    users.image = users.image
-    AND
-    suggestion_list.user_id = users.id
-    AND
-    suggestion_list.description = suggestion_list.description
+   restaurant.name,
+   restaurant.type,
+   restaurant.url,
+   users.username,
+   users.image,
+   suggestion_list.description
+FROM
+  restaurant,
+  users,
+  suggestion_list,
+  suggestion_list_restaurants
+Where
+ restaurant.id = suggestion_list_restaurants.restaurant_id
+AND
+ suggestion_list.id = suggestion_list_restaurants.suggestion_list_id
+AND
+ suggestion_list.user_id = users.id
+AND
+suggestion_list.id = ${id}
+`;
 
-  `;
+  return singleRestaurantListByUser.map((singleList) =>
+    camelcaseKeys(singleList),
+  );
 }

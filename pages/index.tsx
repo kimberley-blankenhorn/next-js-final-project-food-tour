@@ -9,36 +9,6 @@ const backgroundImage = css`
   max-width: 100%;
   max-height: 100%;
 `;
-const navStyle = css`
-  display: flex;
-  justify-content: space-between;
-  height: 70px;
-  background-color: rgb(203, 204, 204, 0.3);
-  margin-bottom: 50px;
-  a {
-    color: black;
-    font-weight: 700;
-    text-decoration: none;
-    -webkit-transition: color 1s;
-    border-bottom: 1px solid transparent;
-
-    transition: all ease-in-out 0.5s;
-    margin: 0 20px;
-
-    &:hover {
-      color: rgba(102, 199, 186);
-      border-color: rgba(102, 199, 186);
-    }
-  }
-`;
-
-const bodyStyles = css`
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  /* width: 100vw; */
-  color: rgb(26, 19, 18);
-`;
 
 const landingPageTextStyle = css`
   width: 100vw;
@@ -61,28 +31,32 @@ const viewToursStyle = css`
   h1 {
     font-size: 50px;
     font-weight: 600;
+    font-family: 'Dancing Script', cursive;
   }
-  h2 {
-  }
-  button {
-    width: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    height: 40px;
-    width: 200px;
-    border-radius: 30px;
-    font-size: 18px;
-    background-color: #66c6ba;
-    color: white;
-    font-weight: 700;
-    border: none;
-    &:hover {
-      -webkit-box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
-      box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
-      -webkit-transition: box-shadow 0.3s ease-in-out;
-      transition: box-shadow 0.3s ease-in-out;
+  a {
+    text-decoration: none;
+    button {
+      width: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+      height: 40px;
+      width: 200px;
+      border-radius: 30px;
+      font-size: 18px;
+      background-color: #66c6ba;
+      color: white;
+      font-weight: 700;
+      border: none;
+      box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+
+      &:hover {
+        -webkit-box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
+        box-shadow: 0px 0px 3px 8px rgba(36, 174, 175, 0.61);
+        -webkit-transition: box-shadow 0.3s ease-in-out;
+        transition: box-shadow 0.3s ease-in-out;
+      }
     }
   }
 `;
@@ -95,6 +69,7 @@ export default function Home(props: Props) {
   return (
     <div css={backgroundImage}>
       <div>
+        <Layout userObject={props.userObject} />
         <Head>
           <title>FoodiesUnited - A Restaurant Sharing Website</title>
           <meta
@@ -103,40 +78,22 @@ export default function Home(props: Props) {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <nav>
-          <div css={navStyle}>
-            <div css={bodyStyles}>
-              <Link href="/">
-                <a>FoodiesUnited</a>
-              </Link>
-            </div>
-            <div css={bodyStyles}>
-              <Layout userObject={props.userObject}>
-                <Link href="/tours">
-                  <a>Tours</a>
-                </Link>
 
-                <Link href="/login">
-                  <a>Login</a>
-                </Link>
-                <Link href="/registration">
-                  <a>Register</a>
-                </Link>
-              </Layout>
-            </div>
-          </div>
-        </nav>
         <div css={landingPageTextStyle}>
           <div css={viewToursStyle}>
             <h1>Explore food around Vienna with suggestions from locals</h1>
             <Link href="/tours">
-              <button>View Tours</button>
+              <a>
+                <button>View Tours</button>
+              </a>
             </Link>
           </div>
           <div css={viewToursStyle}>
             <h2>Not a member yet? Register for free!</h2>
             <Link href="/registration">
-              <button>Register</button>
+              <a>
+                <button>Register</button>
+              </a>
             </Link>
           </div>
         </div>

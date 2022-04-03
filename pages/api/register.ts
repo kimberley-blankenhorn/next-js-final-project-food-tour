@@ -6,7 +6,6 @@ import {
   createSession,
   createUser,
   getUserByUsername,
-  User,
 } from '../../util/database';
 
 export default async function registerHandler(
