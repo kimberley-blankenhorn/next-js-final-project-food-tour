@@ -372,14 +372,12 @@ export async function getSuggestionListWithRestaurantsListId(
     suggestion_list,
     restaurant,
     suggestion_list_restaurants
-
   WHERE
-  suggestion_list.description = ${suggestionListDescription}
+    suggestion_list.description = ${suggestionListDescription}
   AND
-  suggestion_list_restaurants.suggestion_list_id = suggestion_list.id
+    suggestion_list_restaurants.suggestion_list_id = suggestion_list.id
   AND
-
-  suggestion_list_restaurants.restaurant_id= restaurant.id
+    suggestion_list_restaurants.restaurant_id= restaurant.id
     `;
 
   return listWithRestaurants.map((listWithRestaurant) =>

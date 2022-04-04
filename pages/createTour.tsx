@@ -453,7 +453,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {listDescriptions.map((singleList: SuggestionList) => (
                           <option
-                            key={`${Math.random()}-${singleList.id}`}
+                            key={`$Math.random()-${singleList.id}`}
                             value={singleList.id}
                           >
                             {singleList.description}
@@ -475,7 +475,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {restaurantNames.map((singleRestaurant: Restaurant) => (
                           <option
-                            key={`${Math.random()}-${singleRestaurant.id}`}
+                            key={`$Math.random()-${singleRestaurant.id}`}
                             value={singleRestaurant.id}
                           >
                             {singleRestaurant.name}
