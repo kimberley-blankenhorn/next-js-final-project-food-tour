@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { getUserByValidSessionToken } from '../../util/database';
 
@@ -85,7 +86,8 @@ const favoriteStyle = css`
 const infoStyle = css`
   border: solid 3px white;
   border-radius: 30px;
-  width: 25vw;
+  width: 30vw;
+  /* height: 40vh; */
   background-color: rgba(91, 87, 87, 0.6);
   box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   h3 {
@@ -93,8 +95,29 @@ const infoStyle = css`
   }
 
   p {
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Hind Guntur', sans-serif;
+  }
+`;
+
+const backButtonSection = css`
+  display: flex;
+  margin: 70px auto;
+  justify-content: center;
+  align-content: center;
+  button {
+    margin: 5px 20px;
+    height: 6vh;
+    width: 12vw;
+    border-radius: 30px;
+    background-color: rgba(102, 199, 186);
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+    &:hover {
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
+      box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
+      -webkit-transition: box-shadow 0.3s ease-in-out;
+      transition: box-shadow 0.3s ease-in-out;
+    }
   }
 `;
 
@@ -224,6 +247,20 @@ export default function ProtectedUser(props: Props) {
                     <p>email: {props.user.email}</p>
                     <hr />
                     <p>About: {props.user.about}</p>
+                  </div>
+                </div>
+                <div>
+                  <div css={backButtonSection}>
+                    <Link href="/tours">
+                      <a>
+                        <button>To Lists</button>
+                      </a>
+                    </Link>
+                    <Link href="/createTour">
+                      <a>
+                        <button>Create List</button>
+                      </a>
+                    </Link>
                   </div>
                 </div>
                 <div css={favoritesSectionStyle}>

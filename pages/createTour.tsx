@@ -122,7 +122,7 @@ const buttonSectionStyle = css`
 
   button {
     margin: 5px 20px;
-    height: 3vh;
+    height: 4vh;
     width: 8vw;
     border-radius: 30px;
     background-color: rgba(102, 199, 186);
@@ -176,6 +176,25 @@ const errorStyle = css`
   h1 {
     font-size: 35px;
     color: orange;
+  }
+`;
+const backButtonSection = css`
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  button {
+    margin: 5px 20px;
+    height: 4vh;
+    width: 8vw;
+    border-radius: 30px;
+    background-color: rgba(241, 197, 113, 0.9);
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+    &:hover {
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
+      box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
+      -webkit-transition: box-shadow 0.3s ease-in-out;
+      transition: box-shadow 0.3s ease-in-out;
+    }
   }
 `;
 
@@ -434,7 +453,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {listDescriptions.map((singleList: SuggestionList) => (
                           <option
-                            key={`Math.random()-${singleList.id}`}
+                            key={`${Math.random()}-${singleList.id}`}
                             value={singleList.id}
                           >
                             {singleList.description}
@@ -456,7 +475,7 @@ export default function CreateTour(props: Props) {
                         </option>
                         {restaurantNames.map((singleRestaurant: Restaurant) => (
                           <option
-                            key={`Math.random()-${singleRestaurant.id}`}
+                            key={`${Math.random()}-${singleRestaurant.id}`}
                             value={singleRestaurant.id}
                           >
                             {singleRestaurant.name}
@@ -484,7 +503,7 @@ export default function CreateTour(props: Props) {
                       </option>
                       {listDescriptions.map((singleList: SuggestionList) => (
                         <option
-                          key={`Math.random()-${singleList.id}`}
+                          key={`${Math.random()}-${singleList.id}`}
                           value={singleList.description}
                         >
                           {singleList.description}
@@ -510,6 +529,13 @@ export default function CreateTour(props: Props) {
                     >
                       Select
                     </button>
+                  </div>
+                  <div css={backButtonSection}>
+                    <Link href="/tours">
+                      <a>
+                        <button>Back to Lists</button>
+                      </a>
+                    </Link>
                   </div>
                 </div>
                 <div css={displayListStyle}>

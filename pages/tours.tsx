@@ -139,7 +139,7 @@ export default function Tours(props: Props) {
                     <Link href={`/lists/${listAll.id}`}>
                       <a>
                         <div>
-                          <button>To List</button>
+                          <button>To {listAll.username}'s List</button>
                         </div>
                       </a>
                     </Link>

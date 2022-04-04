@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Layout from '../../components/Layout';
 import { GetServerSidePropsContext } from 'next';
 import { getSingleTourByDescription } from '../../util/database';
+import Link from 'next/link';
 
 const backgroundImage = css`
   background-image: url('/images/viennaPark.jpg');
@@ -15,6 +16,7 @@ const backgroundImage = css`
 
 const containerStyle = css`
   display: flex;
+  flex-direction: column;
   height: 75vh;
   width: 90vw;
   border-radius: 30px;
@@ -40,6 +42,10 @@ const containerStyle = css`
   h1 {
     font-size: 35px;
   }
+`;
+const displayListInfoStyle = css`
+  display: flex;
+  margin: auto;
 `;
 
 const leftSection = css`
@@ -125,6 +131,25 @@ const restaurantSectionStyle = css`
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
   }
 `;
+const backButtonSection = css`
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  button {
+    margin: 5px 20px;
+    height: 6vh;
+    width: 12vw;
+    border-radius: 30px;
+    background-color: rgba(241, 197, 113, 0.9);
+    box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
+    &:hover {
+      -webkit-box-shadow: 0px 0px 3px 8px rgba(220, 231, 231, 0.81);
+      box-shadow: 0px 0px 3px 8px rgba(199, 221, 221, 0.81);
+      -webkit-transition: box-shadow 0.3s ease-in-out;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+  }
+`;
 
 type Props = {
   userObject: { username: string };
@@ -155,29 +180,45 @@ export default function SingleTour(props: Props) {
         </Head>
 
         <div css={containerStyle}>
-          <div css={leftSection}>
-            <h1>{props.getSingleTourFromUser[0].username}'s Favorite</h1>
-            <h2>{props.getSingleTourFromUser[0].description}</h2>
+          <div css={displayListInfoStyle}>
+            <div css={leftSection}>
+              <h1>{props.getSingleTourFromUser[0].username}'s Favorite</h1>
+              <h2>{props.getSingleTourFromUser[0].description}</h2>
 
-            <img src={props.getSingleTourFromUser[0].image} alt="profile" />
-            <div>
-              <button>Add list to favorites</button>
+              <img src={props.getSingleTourFromUser[0].image} alt="profile" />
+              <div>
+                <button>Add list to favorites</button>
+              </div>
+            </div>
+            <div css={restaurantSectionStyle}>
+              {props.getSingleTourFromUser.map((singleList: any) => {
+                return (
+                  <div key={`${Math.random()}-${singleList.id}`}>
+                    <div css={listCardsStyle}>
+                      <h3>{singleList.name}</h3>
+
+                      <p>{singleList.type}</p>
+
+                      <a href={singleList.url}>{singleList.url}</a>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-          <div css={restaurantSectionStyle}>
-            {props.getSingleTourFromUser.map((singleList: any) => {
-              return (
-                <div key={`${Math.random()}-${singleList.id}`}>
-                  <div css={listCardsStyle}>
-                    <h3>{singleList.name}</h3>
-
-                    <p>{singleList.type}</p>
-
-                    <a href={singleList.url}>{singleList.url}</a>
-                  </div>
-                </div>
-              );
-            })}
+          <div>
+            <div css={backButtonSection}>
+              <Link href="/tours">
+                <a>
+                  <button>Back to Lists</button>
+                </a>
+              </Link>
+              <Link href="/createTour">
+                <a>
+                  <button>Create a List</button>
+                </a>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
