@@ -85,7 +85,7 @@ const favoriteStyle = css`
 const infoStyle = css`
   border: solid 3px white;
   border-radius: 30px;
-  width: 30vw;
+  width: 25vw;
   background-color: rgba(91, 87, 87, 0.6);
   box-shadow: 9px 11px 21px -4px rgba(0, 0, 0, 0.66);
   h3 {
@@ -250,7 +250,7 @@ export default function ProtectedUser(props: Props) {
                     </div>
                     <div css={listCardsStyle}>
                       <h4>Joe's Hangout spots</h4>
-                      <img src="/images/woman2.jpg" alt="Johanna profile" />
+                      <img src="/images/man2.jpg" alt="Joe's profile" />
                       <div>
                         <button css={toTourButtonStyle}>To Tour</button>
                         <button css={deleteButtonStyle}>Delete</button>
