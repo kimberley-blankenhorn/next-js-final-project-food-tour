@@ -266,7 +266,7 @@ export default function ProtectedUser(props: Props) {
                 <div css={favoritesSectionStyle}>
                   <h3>Favorites</h3>
                   <div>
-                    <div css={listCardsStyle}>
+                    {/* <div css={listCardsStyle}>
                       <h4>Johanna's Coffee Spots</h4>
                       <img src="/images/woman1.jpg" alt="Johanna profile" />
                       <div>
@@ -291,8 +291,8 @@ export default function ProtectedUser(props: Props) {
                       <div>
                         <button css={toTourButtonStyle}>To Tour</button>
                         <button css={deleteButtonStyle}>Delete</button>
-                      </div>
-                    </div>
+                      </div> */}
+                    {/* </div> */}
                   </div>
                 </div>
               </div>
